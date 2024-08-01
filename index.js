@@ -1,180 +1,181 @@
 const inquirer = require('inquirer');
+const { Pool } = require('pg');
 const queries = require('./queries');
 
-const mainMenu = () => {
-    inquirer
-     .prompt({
-        type: 'list',
-        name: 'action',
-        message: 'What would you like to do?',
-        choices: [
-            'View all departments',
-            'View all roles', 
-            'View all employees',
-            'Add a department',
-            'Add a role',
-            'Add an employee',
-            'Update an employee role',
-            'Exit'
-        ],
+const pool = new Pool({
+  user: 'your_username',
+  host: 'localhost',
+  database: 'employee_management',
+  password: 'your_password',
+  port: 5432,
+});
 
-    })    
-.then((answer) => {
+const mainMenu = () => {
+  inquirer.prompt([
+    {
+      name: 'action',
+      type: 'list',
+      message: 'What would you like to do?',
+      choices: [
+        'View All Departments',
+        'View All Roles',
+        'View All Employees',
+        'Add Department',
+        'Add Role',
+        'Add Employee',
+        'Update Employee Role',
+        'Exit'
+      ]
+    }
+  ]).then((answer) => {
     switch (answer.action) {
-      case 'View all departments':
-        viewAllDepartments();
+      case 'View All Departments':
+        viewDepartments();
         break;
-      case 'View all roles':
-        viewAllRoles();
+      case 'View All Roles':
+        viewRoles();
         break;
-      case 'View all employees':
-        viewAllEmployees();
+      case 'View All Employees':
+        viewEmployees();
         break;
-      case 'Add a department':
+      case 'Add Department':
         addDepartment();
         break;
-      case 'Add a role':
+      case 'Add Role':
         addRole();
         break;
-      case 'Add an employee':
+      case 'Add Employee':
         addEmployee();
         break;
-      case 'Update an employee role':
+      case 'Update Employee Role':
         updateEmployeeRole();
         break;
-      default:
+      case 'Exit':
+        pool.end();
         process.exit();
     }
   });
 };
-          
-    const viewAllDepartments = () => {
-        queries.getDepartments().then((result) => {
-            console.table(result.rows);
-            mainMenu();
-        });
-    };
-    
-    const viewAllEmployees = () => {
-        queries.getEmployees().then((result) => {
-            console.table(result.rows);
-            mainMenu();
-        });
-    };
 
-    const addDepartment = () => {
-        inquirer
-        .prompt({
-            type: 'input',
-            name: 'name',
-            message: 'Enter the name of the department:',
-          })
-          .then((answer) => {
-            queries.addDepartment(answer.name).then(() => {
-              console.log('Department added successfully');
-              mainMenu();
-            });
-          });
-      };
-      
-      const addRole = () => {
-        queries.getDepartments().then((result) => {
-          const departments = result.rows.map((row) => ({ name: row.name, value: row.id }));
-          inquirer
-            .prompt([
-              {
-                type: 'input',
-                name: 'title',
-                message: 'Enter the name of the role:',
-              },
-              {
-                type: 'input',
-                name: 'salary',
-                message: 'Enter the salary of the role:',
-              },
-              {
-                type: 'list',
-                name: 'department_id',
-                message: 'Select the department for the role:',
-                choices: departments,
-              },
-            ])
-            .then((answers) => {
-              queries.addRole(answers.title, answers.salary, answers.department_id).then(() => {
-                console.log('Role added successfully');
-                mainMenu();
-              });
-            });
-        });
-      };
-      
-      const addEmployee = () => {
-        Promise.all([queries.getRoles(), queries.getEmployees()]).then(([rolesResult, employeesResult]) => {
-          const roles = rolesResult.rows.map((row) => ({ name: row.title, value: row.id }));
-          const managers = employeesResult.rows.map((row) => ({ name: `${row.first_name} ${row.last_name}`, value: row.id }));
-          managers.push({ name: 'None', value: null });
-      
-          inquirer
-            .prompt([
-              {
-                type: 'input',
-                name: 'first_name',
-                message: 'Enter the first name of the employee:',
-              },
-              {
-                type: 'input',
-                name: 'last_name',
-                message: 'Enter the last name of the employee:',
-              },
-              {
-                type: 'list',
-                name: 'role_id',
-                message: 'Select the role for the employee:',
-                choices: roles,
-              },
-              {
-                type: 'list',
-                name: 'manager_id',
-                message: 'Select the manager for the employee:',
-                choices: managers,
-              },
-            ])
-            .then((answers) => {
-              queries.addEmployee(answers.first_name, answers.last_name, answers.role_id, answers.manager_id).then(() => {
-                console.log('Employee added successfully');
-                mainMenu();
-              });
-            });
-        });
-      };
-      
-      const updateEmployeeRole = () => {
-        Promise.all([queries.getEmployees(), queries.getRoles()]).then(([employeesResult, rolesResult]) => {
-          const employees = employeesResult.rows.map((row) => ({ name: `${row.first_name} ${row.last_name}`, value: row.id }));
-          const roles = rolesResult.rows.map((row) => ({ name: row.title, value: row.id }));
-      
-          inquirer
-            .prompt([
-              {
-                type: 'list',
-                name: 'employee_id',
-                message: 'Select the employee to update:',
-                choices: employees,
-              },
-              {
-                type: 'list',
-                name: 'role_id',
-                message: 'Select the new role for the employee:',
-                choices: roles,
-              },
-            ])
-            .then((answers) => {
-              queries.updateEmployeeRole(answers.employee_id, answers.role_id).then(() => {
-                console.log('Employee role updated successfully');
-                mainMenu();
-              });
-            });
-        });
-      };
-      
+const viewDepartments = () => {
+  pool.query(queries.viewDepartments, (err, res) => {
+    if (err) throw err;
+    console.table(res.rows);
+    mainMenu();
+  });
+};
+
+const viewRoles = () => {
+  pool.query(queries.viewRoles, (err, res) => {
+    if (err) throw err;
+    console.table(res.rows);
+    mainMenu();
+  });
+};
+
+const viewEmployees = () => {
+  pool.query(queries.viewEmployees, (err, res) => {
+    if (err) throw err;
+    console.table(res.rows);
+    mainMenu();
+  });
+};
+
+const addDepartment = () => {
+  inquirer.prompt([
+    {
+      name: 'name',
+      type: 'input',
+      message: 'Enter the name of the department:'
+    }
+  ]).then((answer) => {
+    pool.query(queries.addDepartment, [answer.name], (err, res) => {
+      if (err) throw err;
+      console.log(`Added department ${answer.name}`);
       mainMenu();
+    });
+  });
+};
+
+const addRole = () => {
+  inquirer.prompt([
+    {
+      name: 'title',
+      type: 'input',
+      message: 'Enter the name of the role:'
+    },
+    {
+      name: 'salary',
+      type: 'input',
+      message: 'Enter the salary for the role:'
+    },
+    {
+      name: 'department_id',
+      type: 'input',
+      message: 'Enter the department ID for the role:'
+    }
+  ]).then((answer) => {
+    pool.query(queries.addRole, [answer.title, answer.salary, answer.department_id], (err, res) => {
+      if (err) throw err;
+      console.log(`Added role ${answer.title}`);
+      mainMenu();
+    });
+  });
+};
+
+const addEmployee = () => {
+  inquirer.prompt([
+    {
+      name: 'first_name',
+      type: 'input',
+      message: 'Enter the employee\'s first name:'
+    },
+    {
+      name: 'last_name',
+      type: 'input',
+      message: 'Enter the employee\'s last name:'
+    },
+    {
+      name: 'role_id',
+      type: 'input',
+      message: 'Enter the role ID for the employee:'
+    },
+    {
+      name: 'manager_id',
+      type: 'input',
+      message: 'Enter the manager ID for the employee (leave blank if none):',
+      default: null
+    }
+  ]).then((answer) => {
+    pool.query(queries.addEmployee, [answer.first_name, answer.last_name, answer.role_id, answer.manager_id], (err, res) => {
+      if (err) throw err;
+      console.log(`Added employee ${answer.first_name} ${answer.last_name}`);
+      mainMenu();
+    });
+  });
+};
+
+const updateEmployeeRole = () => {
+  inquirer.prompt([
+    {
+      name: 'employee_id',
+      type: 'input',
+      message: 'Enter the ID of the employee whose role you want to update:'
+    },
+    {
+      name: 'role_id',
+      type: 'input',
+      message: 'Enter the new role ID for the employee:'
+    }
+  ]).then((answer) => {
+    pool.query(queries.updateEmployeeRole, [answer.role_id, answer.employee_id], (err, res) => {
+      if (err) throw err;
+      console.log(`Updated employee's role`);
+      mainMenu();
+    });
+  });
+};
+
+
+mainMenu();
+
