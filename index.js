@@ -19,7 +19,6 @@ const mainMenu = () => {
         ],
 
     })    
-
 .then((answer) => {
     switch (answer.action) {
       case 'View all departments':
