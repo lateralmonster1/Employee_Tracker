@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const queries = require('./queries');
 
-const mainmenu = () => {
+const mainMenu = () => {
     inquirer
      .prompt({
         type: 'list',
