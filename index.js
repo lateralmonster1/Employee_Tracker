@@ -52,7 +52,7 @@ const mainmenu = () => {
     const viewAllDepartments = () => {
         queries.getDepartments().then((result) => {
             console.table(result.rows);
-            mainmenu();
+            mainMenu();
         });
     };
     
