@@ -1,15 +1,14 @@
 {
   "name": "employee_tracker",
   "version": "1.0.0",
+  "description": "[How to create a Professional README](https://coding-boot-camp.github.io/full-stack/github/professional-readme-guide) # Employee_Tracker",
   "main": "index.js",
-  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "inquirer": "^10.1.6",
     "pg": "^8.12.0"

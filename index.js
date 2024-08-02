@@ -1,4 +1,7 @@
-const inquirer = require('inquirer');
+let inquirer = require('inquirer');
+
+inquirer = inquirer.default;
+
 const { Pool } = require('pg');
 const queries = require('./queries.cjs');
 
