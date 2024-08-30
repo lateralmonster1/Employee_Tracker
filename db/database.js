@@ -1,18 +1,18 @@
-import pkg from 'pg';  // Import the entire pg package
+import pkg from 'pg'; 
 import dotenv from 'dotenv';
 
-dotenv.config();  // Load environment variables from .env file
+dotenv.config();
 
-const { Pool } = pkg;  // Destructure Pool from the imported package
+const { Pool } = pkg;  
 
 const pool = new Pool({
-    user: process.env.DB_USER,          // PostgreSQL username
-    host: process.env.DB_HOST,          // Host (usually 'localhost')
-    database: process.env.DB_DATABASE,  // Name of the database
-    password: process.env.DB_PASSWORD,  // PostgreSQL password
-    port: process.env.DB_PORT,          // PostgreSQL port (usually 5432)
+    user: process.env.DB_USER,         
+    host: process.env.DB_HOST,         
+    database: process.env.DB_DATABASE, 
+    password: process.env.DB_PASSWORD,  
+    port: process.env.DB_PORT,         
 });
 
-export default pool;  // Export the pool object for use in other files
+export default pool; 
 console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_PASSWORD:', typeof process.env.DB_PASSWORD);  // Should log 'string'
+console.log('DB_PASSWORD:', typeof process.env.DB_PASSWORD); 
