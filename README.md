@@ -70,6 +70,7 @@ Add Employee: Collects the employee's first and last names, role, and manager in
 Update Employee Role: Allows you to select an employee and update their role within the company.
 Technology Stack
 The Employee Tracker is built using the following technologies:
+
 Example video:
 https://github.com/user-attachments/assets/07f72758-5497-42e4-aadd-c99a940c3834
 https://github.com/user-attachments/assets/9359ef74-d215-45cf-9a0c-666d94eb11ff
