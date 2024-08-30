@@ -5,6 +5,9 @@ dotenv.config();
 
 const { Pool } = pkg;  
 
+console.log(process.env)
+
+
 const pool = new Pool({
     user: process.env.DB_USER,         
     host: process.env.DB_HOST,         
@@ -15,4 +18,4 @@ const pool = new Pool({
 
 export default pool; 
 console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_PASSWORD:', typeof process.env.DB_PASSWORD); 
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD); 
